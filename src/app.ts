@@ -1,6 +1,8 @@
 import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
-import { UserRoutes } from './module/user/user.route'
+import { UserRoutes } from './app/module/user/user.route'
+import globalErrorHandler from './app/middlewares/globalErrorHandler'
+import notFound from './app/middlewares/notFound'
 const app: Application = express()
 
 //middleware
@@ -15,4 +17,10 @@ app.get('/', (req: Request, res: Response) => {
 //routes
 app.use('/api/v1/users', UserRoutes)
 
+//global error handler
+app.use(globalErrorHandler)
+//API Not Found
+app.use(notFound)
+
+// export
 export default app
