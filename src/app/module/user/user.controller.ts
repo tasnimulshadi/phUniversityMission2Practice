@@ -1,24 +1,20 @@
-import { NextFunction, Request, Response } from 'express'
 import { UserServices } from './user.service'
+import catchAsync from '../../uttils/catchAsync'
 
-const createStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { password, studentData } = req.body
-    const result = await UserServices.createStudentIntoDB(password, studentData)
+// catchAsync is higher order function 
+// which takes a requesthandler async function and resolve it. 
+// if it got any error then send to global error handler
+// returns the combined function
+const createStudent = catchAsync(async (req, res) => {
+  const { password, studentData } = req.body
+  const result = await UserServices.createStudentIntoDB(password, studentData)
 
-    res.status(200).json({
-      success: true,
-      message: 'success',
-      data: result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+  res.status(200).json({
+    success: true,
+    message: 'success',
+    data: result,
+  })
+})
 
 // export
 export const UserControllers = {
