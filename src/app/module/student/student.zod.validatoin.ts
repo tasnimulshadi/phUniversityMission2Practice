@@ -23,7 +23,8 @@ export const zodCreateStudentValidationSchema = z.object({
         relation: z.string(),
       }),
       profileImage: z.string(),
-      academicDepartment: z.object({}).optional(),
+      // academicDepartment: z.object({}).optional(),
+      admissionSemester: z.string(),
     }),
   }),
 })

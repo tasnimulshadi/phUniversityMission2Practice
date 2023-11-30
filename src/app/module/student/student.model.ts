@@ -34,6 +34,7 @@ const studentSchema = new Schema<TStudent>({
   },
   email: {
     type: String,
+    unique: true,
     required: true,
   },
   contactNo: {
@@ -76,9 +77,13 @@ const studentSchema = new Schema<TStudent>({
     type: String,
     required: true,
   },
-  academicDepartment: {
-    type: Object,
-    required: true,
+  // academicDepartment: {
+  //   type: Object,
+  //   required: true,
+  // },
+  admissionSemester: {
+    type: Schema.Types.ObjectId,
+    ref: 'AcademicSemester',
   },
 })
 

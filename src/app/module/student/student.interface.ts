@@ -23,5 +23,6 @@ export type TStudent = {
     relation: string
   }
   profileImage: string
-  academicDepartment: object
+  // academicDepartment: object
+  admissionSemester: Types.ObjectId
 }

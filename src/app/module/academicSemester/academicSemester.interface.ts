@@ -18,8 +18,13 @@ export type TAcademicSemesterCode = '01' | '02' | '03'
 
 export type TAcademicSemester = {
   name: TAcademicSemesterName
-  year: Date
+  year: string
   code: TAcademicSemesterCode
   startMonth: TAcademicSemesterMonth
   endMonth: TAcademicSemesterMonth
+}
+
+// mappped type
+export type TAcademicSemesterNameCodeMapper = {
+  [key: string]: string
 }
