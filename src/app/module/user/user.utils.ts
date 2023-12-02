@@ -2,16 +2,23 @@ import { Types } from 'mongoose'
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model'
 import { UserModel } from './user.model'
 
-const findLastStudentId = async () => {
-  const lastStudent = await UserModel.findOne({ role: 'student' }, { id: 1 })
+const findLastStudentId = async (year: string, semesterCode: string) => {
+  const yearAndSemesterCode = year + semesterCode //'2030' + '01' = '203001'
+
+  const lastStudent = await UserModel.findOne(
+    {
+      role: 'student',
+      id: { $regex: yearAndSemesterCode },
+    },
+    { id: 1 },
+  )
     .sort({
       createdAt: -1,
     })
     .lean()
 
   //2030010001
-  //------0001
-  return lastStudent?.id ? lastStudent.id.substring(6) : undefined
+  return lastStudent?.id ? lastStudent.id : undefined
 }
 
 export const generatorStudentId = async (admissionSemester: Types.ObjectId) => {
@@ -23,12 +30,22 @@ export const generatorStudentId = async (admissionSemester: Types.ObjectId) => {
     throw new Error('Semester Data Invalid')
   }
 
-  //first time 0000 (0).toString()
-  const currentId = (await findLastStudentId()) || (0).toString()
-  console.log(currentId)
+  const currentSemesterCode = semesterData.code //2030
+  const currentYear = semesterData.year //03
 
-  const increamentId = (Number(currentId) + 1).toString().padStart(4, '0')
-  console.log(increamentId)
+  const lastStudent = await findLastStudentId(currentYear, currentSemesterCode) //2030030001
+
+  // const lastStudentSemesterCode = lastStudent?.substring(4, 6) //2030
+  // const lastStudentYear = lastStudent?.substring(0, 4) //03
+
+  //first time 0000
+  let currentId = (0).toString().padStart(4, '0') //0000
+
+  if (lastStudent) {
+    currentId = lastStudent.substring(6) //0001
+  }
+
+  const increamentId = (Number(currentId) + 1).toString().padStart(4, '0') //0001+1
 
   //2030010001
   //2030 01 0001
