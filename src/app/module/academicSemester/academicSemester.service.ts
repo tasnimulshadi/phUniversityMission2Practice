@@ -1,3 +1,5 @@
+import httpStatus from 'http-status'
+import AppError from '../../errors/AppError'
 import { academicSemesterNameCodeMapper } from './academicSemester.constant'
 import { TAcademicSemester } from './academicSemester.interface'
 import { AcademicSemesterModel } from './academicSemester.model'
@@ -8,7 +10,7 @@ const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   //make a wrapper then compare data with mapper
   // if does not match returns error
   if (academicSemesterNameCodeMapper[payload.name] !== payload.code) {
-    throw new Error('invalid code... code does not match name')
+    throw new AppError(404, 'invalid code... code does not match name')
   }
 
   const result = await AcademicSemesterModel.create(payload)
@@ -42,12 +44,15 @@ const updateAcademicSemesterByIdIntoDB = async (
   })
 
   if (isSemesterExists) {
-    throw new Error('Can not Update to and existing Academic Semester')
+    throw new AppError(404, 'Can not Update to and existing Academic Semester')
   }
 
   // check for if code does not match name
   if (academicSemesterNameCodeMapper[payload.name] !== payload.code) {
-    throw new Error('invalid code... code does not match name')
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'invalid code... code does not match name',
+    )
   }
 
   const result = await AcademicSemesterModel.updateOne(

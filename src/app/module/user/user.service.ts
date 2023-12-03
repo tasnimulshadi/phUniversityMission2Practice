@@ -1,4 +1,5 @@
 import config from '../../config'
+import AppError from '../../errors/AppError'
 import { TStudent } from '../student/student.interface'
 import { StudentModel } from '../student/student.model'
 import { TUser } from './user.interface'
@@ -13,7 +14,7 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   })
 
   if (isStudentEmailExists) {
-    throw new Error('Email already exists!')
+    throw new AppError(500,'Email already exists!')
   }
 
   // if password dont comes from parameter then set default password

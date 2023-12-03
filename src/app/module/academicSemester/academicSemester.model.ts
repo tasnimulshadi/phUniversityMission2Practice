@@ -5,6 +5,7 @@ import {
   academicSemesterMonthArray,
   academicSemesterNameArray,
 } from './academicSemester.constant'
+import AppError from '../../errors/AppError'
 
 //
 //
@@ -53,7 +54,7 @@ academicSemesterSchema.pre('save', async function (next) {
   })
   //if found throw error
   if (isSemesterExists) {
-    throw new Error('Academic Semester Already exists!')
+    throw new AppError(403, 'Academic Semester Already exists!')
   }
 
   next()
@@ -69,7 +70,7 @@ academicSemesterSchema.pre('save', async function (next) {
 //   })
 
 //   if (isSemesterExists) {
-//     throw new Error('Can not Update to and existing Academic Semester')
+// throw new AppError(403,'Can not Update to and existing Academic Semester')
 //   }
 
 //   next()
