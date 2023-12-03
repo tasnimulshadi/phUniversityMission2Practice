@@ -77,13 +77,15 @@ const studentSchema = new Schema<TStudent>({
     type: String,
     required: true,
   },
-  // academicDepartment: {
-  //   type: Object,
-  //   required: true,
-  // },
-  admissionSemester: {
+  academicDepartment: {
+    type: Schema.Types.ObjectId,
+    ref: 'AcademicDepartment',
+    required: true,
+  },
+  academicSemester: {
     type: Schema.Types.ObjectId,
     ref: 'AcademicSemester',
+    required: true,
   },
 })
 

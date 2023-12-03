@@ -21,7 +21,7 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   const userData: Partial<TUser> = {
     password: password || (config.default_password as string),
     role: 'student',
-    id: await generatorStudentId(studentData.admissionSemester), // find academic semester info with admissionSemester refence
+    id: await generatorStudentId(studentData.academicSemester), // find academic semester info with admissionSemester refence
   }
 
   //create user

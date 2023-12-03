@@ -1,7 +1,7 @@
 import express from 'express'
 import { UserControllers } from './user.controller'
 import validateRequest from '../../uttils/validateRequest'
-import { zodCreateStudentValidationSchema } from '../student/student.zod.validatoin'
+import { zodCreateStudentValidationSchema } from '../student/student.validatoin'
 
 const router = express.Router()
 

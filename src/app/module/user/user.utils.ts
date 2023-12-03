@@ -21,9 +21,9 @@ const findLastStudentId = async (year: string, semesterCode: string) => {
   return lastStudent?.id ? lastStudent.id : undefined
 }
 
-export const generatorStudentId = async (admissionSemester: Types.ObjectId) => {
+export const generatorStudentId = async (academicSemester: Types.ObjectId) => {
   const semesterData = await AcademicSemesterModel.findOne({
-    _id: admissionSemester,
+    _id: academicSemester,
   })
 
   if (semesterData === null) {
