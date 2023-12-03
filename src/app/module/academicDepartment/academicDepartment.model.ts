@@ -29,7 +29,7 @@ academicDepartmentschema.pre('save', async function (next) {
   })
 
   if (isDeparmentExists) {
-    throw new AppError(404, 'Department Aleardy exists!')
+    throw new AppError(404, 'Department Aleardy exists!')  
   }
 
   next()
