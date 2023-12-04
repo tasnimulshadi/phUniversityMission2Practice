@@ -87,6 +87,28 @@ const studentSchema = new Schema<TStudent>({
     ref: 'AcademicSemester',
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 })
 
+//middlewares
+studentSchema.pre('find', function (next) {
+  this.find({
+    isDeleted: { $ne: true },
+  })
+
+  next()
+})
+
+studentSchema.pre('findOne', function (next) {
+  this.find({
+    isDeleted: { $ne: true },
+  })
+
+  next()
+})
+
+//export
 export const StudentModel = model<TStudent>('Student', studentSchema)

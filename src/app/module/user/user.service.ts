@@ -11,13 +11,13 @@ import httpStatus from 'http-status'
 
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   //check student email
-  // const isStudentEmailExists = await StudentModel.findOne({
-  //   email: studentData.email,
-  // })
+  const isStudentEmailExists = await StudentModel.findOne({
+    email: studentData.email,
+  })
 
-  // if (isStudentEmailExists) {
-  //   throw new AppError(403, 'Email already exists!')
-  // }
+  if (isStudentEmailExists) {
+    throw new AppError(403, 'Email already exists!')
+  }
 
   //session create
   const session = await mongoose.startSession()
@@ -66,6 +66,8 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     await session.abortTransaction()
     // end session
     await session.endSession()
+
+    throw new AppError(httpStatus.UNPROCESSABLE_ENTITY, 'Failed to Create')
   }
 }
 
