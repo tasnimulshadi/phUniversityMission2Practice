@@ -37,3 +37,4 @@ export const academicSemesterNameCodeMapper: TAcademicSemesterNameCodeMapper = {
   spring: '02',
   fall: '03',
 }
+

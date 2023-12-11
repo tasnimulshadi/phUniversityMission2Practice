@@ -22,18 +22,18 @@ const academicDepartmentschema = new Schema<TAcademicDepartment>(
 )
 
 //document middleware
-academicDepartmentschema.pre('save', async function (next) {
-  //check if the name is already exists
-  const isDeparmentExists = await AcademicDepartmentModel.findOne({
-    name: this.name,
-  })
+// academicDepartmentschema.pre('save', async function (next) {
+//   //check if the name is already exists
+//   const isDeparmentExists = await AcademicDepartmentModel.findOne({
+//     name: this.name,
+//   })
 
-  if (isDeparmentExists) {
-    throw new AppError(404, 'Department Aleardy exists!')  
-  }
+//   if (isDeparmentExists) {
+//     throw new AppError(404, 'Department Aleardy exists!')
+//   }
 
-  next()
-})
+//   next()
+// })
 
 //query middleware
 academicDepartmentschema.pre('updateOne', async function (next) {

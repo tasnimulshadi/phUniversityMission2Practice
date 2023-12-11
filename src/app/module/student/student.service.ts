@@ -6,8 +6,28 @@ import httpStatus from 'http-status'
 import { TStudent } from './student.interface'
 
 //get all
-const getAllStudentsFromDB = async () => {
-  const result = await StudentModel.find()
+const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
+  let searchTerm = ''
+  if (query?.searchTerm) {
+    searchTerm = query.searchTerm as string
+  }
+
+  const searchQuery = StudentModel.find({
+    $or: ['email', 'name.firstName', 'presentAddress'].map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  })
+
+  const filterQueryObj = { ...query } //copy
+
+  const excludeFieldsBeforeFilter = ['searchTerm', 'sort', 'limit', 'page']
+
+  excludeFieldsBeforeFilter.forEach((elem) => delete filterQueryObj[elem])
+  
+  console.log({ query }, { filterQueryObj })
+
+  const filterQuery = searchQuery
+    .find(filterQueryObj)
     .populate('academicSemester')
     .populate({
       path: 'academicDepartment',
@@ -16,7 +36,32 @@ const getAllStudentsFromDB = async () => {
       },
     })
 
-  return result
+  let sort = 'createdAt'
+  if (query.sort) {
+    sort = query.sort as string
+  }
+
+  const sortQuery = filterQuery.sort(sort)
+  // console.log(sortQuery)
+
+  let limit = 1
+  let page = 1
+  let skip = 0
+
+  if (query.limit) {
+    limit = Number(query.limit) //parse string to mun
+  }
+
+  if (query.page) {
+    page = Number(query.page) //parse string to mun
+    skip = (page - 1) * limit
+  }
+
+  const limitQuery = sortQuery.limit(limit)
+
+  const paginationQuery = await limitQuery.skip(skip)
+
+  return paginationQuery
 }
 
 //get 1
@@ -109,7 +154,7 @@ const updateStudentFromDB = async (
     ...remainingStudentData,
   }
 
-  //checking if the update Document has ny non-primitive data. if has then do this
+  //checking if the update Document has any non-primitive data. if has then do this
   if (name && Object.keys(name).length) {
     for (const [key, value] of Object.entries(name)) {
       modifiedUpdateData[`name.${key}`] = value

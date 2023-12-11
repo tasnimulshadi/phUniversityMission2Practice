@@ -3,7 +3,9 @@ import { StudentServices } from './student.service'
 
 //get all
 const getAllStudents = catchAsync(async (req, res) => {
-  const result = await StudentServices.getAllStudentsFromDB()
+  // search query filter
+  const query = req.query
+  const result = await StudentServices.getAllStudentsFromDB(query)
 
   res.status(200).json({
     success: true,

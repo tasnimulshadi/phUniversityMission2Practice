@@ -14,6 +14,11 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to PH University')
 })
 
+//test
+// app.get('/test', (req: Request, res: Response) => {
+//   Promise.reject()
+// })
+
 //routes
 app.use('/api/v1', router)
 
