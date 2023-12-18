@@ -7,34 +7,44 @@ import { TStudent } from './student.interface'
 
 //get all
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
-  let searchTerm = ''
-  if (query?.searchTerm) {
-    searchTerm = query.searchTerm as string
-  }
+  // let searchTerm = ''
+  // if (query?.searchTerm) {
+  //   searchTerm = query.searchTerm as string
+  // }
 
-  const searchQuery = StudentModel.find({
-    $or: ['email', 'name.firstName', 'presentAddress'].map((field) => ({
-      [field]: { $regex: searchTerm, $options: 'i' },
-    })),
-  })
+  // const searchableFields = ['email', 'name.firstName', 'presentAddress']
 
-  const filterQueryObj = { ...query } //copy
+  // const searchQuery = StudentModel.find({
+  //   $or: ['email', 'name.firstName', 'presentAddress'].map((field) => ({
+  //     [field]: { $regex: searchTerm, $options: 'i' },
+  //   })),
+  // })
 
-  const excludeFieldsBeforeFilter = ['searchTerm', 'sort', 'limit', 'page']
+  // const filterQueryObj = { ...query } //copy
 
-  excludeFieldsBeforeFilter.forEach((elem) => delete filterQueryObj[elem])
-  
-  console.log({ query }, { filterQueryObj })
+  // const excludeFieldsBeforeFilter = [
+  //   'searchTerm',
+  //   'sort',
+  //   'limit',
+  //   'page',
+  //   'fields',
+  // ]
 
-  const filterQuery = searchQuery
-    .find(filterQueryObj)
-    .populate('academicSemester')
-    .populate({
-      path: 'academicDepartment',
-      populate: {
-        path: 'academicFaculty',
-      },
-    })
+  // excludeFieldsBeforeFilter.forEach((elem) => delete filterQueryObj[elem])
+
+  // console.log({ query }, { filterQueryObj })
+
+  // const filterQuery = searchQuery.find(filterQueryObj)
+
+  // const filterQuery = searchQuery
+  // .find(filterQueryObj)
+  // .populate('academicSemester')
+  // .populate({
+  //   path: 'academicDepartment',
+  //   populate: {
+  //     path: 'academicFaculty',
+  //   },
+  // })
 
   let sort = 'createdAt'
   if (query.sort) {
@@ -59,9 +69,16 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 
   const limitQuery = sortQuery.limit(limit)
 
-  const paginationQuery = await limitQuery.skip(skip)
+  const paginationQuery = limitQuery.skip(skip)
 
-  return paginationQuery
+  let fields = ''
+  if (query.fields) {
+    fields = (query.fields as string).split(',').join(' ')
+  }
+
+  const fieldFilter = paginationQuery.select(fields)
+
+  return fieldFilter
 }
 
 //get 1
