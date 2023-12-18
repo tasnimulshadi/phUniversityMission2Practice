@@ -4,81 +4,32 @@ import { UserModel } from '../user/user.model'
 import AppError from '../../errors/AppError'
 import httpStatus from 'http-status'
 import { TStudent } from './student.interface'
+import QueryBuilder from '../../builder/QueryBuilder'
 
 //get all
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
-  // let searchTerm = ''
-  // if (query?.searchTerm) {
-  //   searchTerm = query.searchTerm as string
-  // }
+  const searchableFields = ['email', 'name.firstName', 'presentAddress']
 
-  // const searchableFields = ['email', 'name.firstName', 'presentAddress']
+  const studentQuery = new QueryBuilder(
+    StudentModel.find()
+      .populate('academicSemester')
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+        },
+      }),
+    query,
+  )
+    .search(searchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields()
 
-  // const searchQuery = StudentModel.find({
-  //   $or: ['email', 'name.firstName', 'presentAddress'].map((field) => ({
-  //     [field]: { $regex: searchTerm, $options: 'i' },
-  //   })),
-  // })
+  const result = await studentQuery.modelQuery
 
-  // const filterQueryObj = { ...query } //copy
-
-  // const excludeFieldsBeforeFilter = [
-  //   'searchTerm',
-  //   'sort',
-  //   'limit',
-  //   'page',
-  //   'fields',
-  // ]
-
-  // excludeFieldsBeforeFilter.forEach((elem) => delete filterQueryObj[elem])
-
-  // console.log({ query }, { filterQueryObj })
-
-  // const filterQuery = searchQuery.find(filterQueryObj)
-
-  // const filterQuery = searchQuery
-  // .find(filterQueryObj)
-  // .populate('academicSemester')
-  // .populate({
-  //   path: 'academicDepartment',
-  //   populate: {
-  //     path: 'academicFaculty',
-  //   },
-  // })
-
-  let sort = 'createdAt'
-  if (query.sort) {
-    sort = query.sort as string
-  }
-
-  const sortQuery = filterQuery.sort(sort)
-  // console.log(sortQuery)
-
-  let limit = 1
-  let page = 1
-  let skip = 0
-
-  if (query.limit) {
-    limit = Number(query.limit) //parse string to mun
-  }
-
-  if (query.page) {
-    page = Number(query.page) //parse string to mun
-    skip = (page - 1) * limit
-  }
-
-  const limitQuery = sortQuery.limit(limit)
-
-  const paginationQuery = limitQuery.skip(skip)
-
-  let fields = ''
-  if (query.fields) {
-    fields = (query.fields as string).split(',').join(' ')
-  }
-
-  const fieldFilter = paginationQuery.select(fields)
-
-  return fieldFilter
+  return result
 }
 
 //get 1

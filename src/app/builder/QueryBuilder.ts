@@ -31,14 +31,10 @@ class QueryBuilder<T> {
   }
 
   filter(excludedFields: string[] = []) {
+    // console.log();
+
     const queryObj = { ...this.query } //copy base query into another
-    // const excludeFieldsBeforeFilter = [
-    //     'searchTerm',
-    //     'sort',
-    //     'limit',
-    //     'page',
-    //     'fields',
-    //   ]
+    excludedFields = ['searchTerm', 'sort', 'limit', 'page', 'fields']
 
     //remove unneccesary items from query so that the query ca run for the searchTerm only
     excludedFields.forEach((item) => delete queryObj[item])
@@ -50,7 +46,7 @@ class QueryBuilder<T> {
   }
 
   sort() {
-    const sort = this?.query?.sort || '-createdAt'
+    const sort = (this?.query?.sort as string).split(',').join(' ') || '-createdAt'
 
     //modify the query
     this.modelQuery = this.modelQuery.sort(sort as string)
@@ -59,12 +55,12 @@ class QueryBuilder<T> {
   }
 
   paginate(defaultLimit: number = 10) {
-    const limit = this?.query?.limit || defaultLimit
-    const page = this?.query?.page || 1
-    const skip = (Number(page) - 1) * Number(limit)
+    const limit = Number(this?.query?.limit) || defaultLimit
+    const page = Number(this?.query?.page) || 1
+    const skip = (page - 1) * limit
 
     //modify the query
-    this.modelQuery = this.modelQuery.skip(skip)
+    this.modelQuery = this.modelQuery.skip(skip).limit(limit)
 
     return this
   }
